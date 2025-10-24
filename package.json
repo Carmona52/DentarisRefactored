@@ -11,8 +11,12 @@
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
+    "@lottiefiles/dotlottie-react": "^0.17.5",
+    "@mui/icons-material": "^7.3.4",
     "@mui/material": "^7.3.4",
+    "@mui/x-date-pickers": "^8.15.0",
     "@next/env": "^15.5.4",
+    "@reduxjs/toolkit": "^2.9.2",
     "axios": "^1.12.2",
     "dayjs": "^1.11.18",
     "next": "15.5.4",
