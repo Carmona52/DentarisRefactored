@@ -1,6 +1,6 @@
 'use client'
 import * as React from 'react';
-import { styled, useTheme, Theme, CSSObject } from '@mui/material/styles';
+import { styled, Theme, CSSObject } from '@mui/material/styles';
 import {
     Box,
     CssBaseline,
@@ -150,7 +150,6 @@ function NavList({ items, pathname, onNavigate,open }: { items: NavItem[]; pathn
 }
 
 export default function MiniDrawer({ children }: DrawerLayoutProps) {
-    const theme = useTheme();
     const [open, setOpen] = React.useState(false);
     const router = useRouter();
     const pathname = usePathname();

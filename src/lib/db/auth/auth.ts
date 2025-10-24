@@ -1,7 +1,7 @@
 'use server'
 import axios from "axios";
 import { cookies } from 'next/headers'
-import {usuario, clinica} from "@/types/auth/auth";
+import {clinica} from "@/types/auth/auth";
 
 const loginURL = process.env.NEXT_PUBLIC_LOGIN_URL;
 const registerURL = process.env.NEXT_PUBLIC_REGISTER_URL;
@@ -16,7 +16,6 @@ export const login = async (email: string, password: string)=> {
     try {
         const response = await axios.post(loginURL, {email, password});
         const data = response.data;
-        const userData= data?.usuario;
         const consultorioData= data?.consultorio;
         const tokenUser:string = data?.token || "Token";
 
