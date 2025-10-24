@@ -6,7 +6,7 @@ export interface usuario {
     apellidos: string;
     email: string;
     telefono: string;
-    fecha_nacimiento:string;
+    fecha_nacimiento: string;
     genero: "Femenino" | "Masculino" | "Otro";
     pais_origen: string;
     direccion: string;
@@ -17,9 +17,12 @@ export interface usuario {
     nombre_contacto_emergencia: string;
     telefono_contacto_emergencia: string;
     last_login: string;
+    token?: string;
+    success: boolean;
 }
 
 export interface clinica {
+    success: boolean;
     clinica_name: string;
     telefono: string;
     email: string;
