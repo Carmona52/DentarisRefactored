@@ -1,19 +1,11 @@
+import {ThemeProvider} from '@mui/material/styles'
+import {theme} from "@/theme/theme";
 import type {Metadata} from "next";
-import {Geist, Geist_Mono} from "next/font/google";
 import "../globals.css";
 import NavBar from "@/components/navigation/NavBar"
 import Sidebar from "../../components/navigation/SideBar"
 import Box from '@mui/material/Box';
 
-const geistSans = Geist({
-    variable: "--font-geist-sans",
-    subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-    variable: "--font-geist-mono",
-    subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
     title: "Dentaris DashBoard",
@@ -26,15 +18,25 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
+        <ThemeProvider theme={theme}>
 
-        <div className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-            <Sidebar>
-                <NavBar/>
-                <Box className="border-2 border-gray-200 rounded-2xl h-screen overflow-y-auto p-2">
-                    {children}
-                </Box>
-            </Sidebar>
-        </div>
+            <Box sx={{display: "flex", flexDirection: "column", height: "100vh"}}>
+                <Sidebar>
 
+                    <NavBar/>
+                    <Box
+                        sx={{
+                            marginX: -.5,
+                            marginBottom: 2,
+                            p: 1,
+                            overflowY: "auto",
+                            maxHeight: '100vh',
+                        }}
+                        className="m-2 border-2 border-gray-200 ml-4">
+                        {children}
+                    </Box>
+                </Sidebar>
+            </Box>
+        </ThemeProvider>
     );
 }

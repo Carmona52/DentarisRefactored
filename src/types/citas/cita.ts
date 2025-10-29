@@ -9,6 +9,10 @@ export interface cita{
     dentista: usuario,
     motivo: string
 }
+export interface data{
+    data:cita[]
+}
+
 
 export interface updateCita{
     estado:string,
