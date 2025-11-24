@@ -38,7 +38,6 @@ export default function LoginPage() {
         try {
             setLoading(true);
             const response = await login(email, password);
-            console.log(response)
 
             if (response?.success) {
                 router.push("/dashboard");

@@ -25,6 +25,7 @@ import {
     SupervisedUserCircle as SupervisedUserCircleIcon,
 } from '@mui/icons-material';
 import { useRouter, usePathname } from 'next/navigation';
+import {logOut} from "@/auth/auth";
 
 type DrawerLayoutProps = {
     children: React.ReactNode;
@@ -158,7 +159,8 @@ export default function MiniDrawer({ children }: DrawerLayoutProps) {
 
     const handleNavigate = (path: string) => {
         if (path === 'logout') {
-            console.log('Cerrar sesión');
+            logOut();
+            router.push('/auth/login');
         } else {
             router.push(path);
         }

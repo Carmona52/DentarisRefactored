@@ -1,19 +1,8 @@
 import type {Metadata} from "next";
-import {Geist, Geist_Mono} from "next/font/google";
 import "../globals.css";
-import NavBar from "@/components/navigation/NavBar"
-import Sidebar from "../../components/navigation/SideBar"
+import NavBar from "@/navigation/NavBar"
+import Sidebar from "@/navigation/SideBar";
 import Box from '@mui/material/Box';
-
-const geistSans = Geist({
-    variable: "--font-geist-sans",
-    subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-    variable: "--font-geist-mono",
-    subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
     title: "Dentaris DashBoard",
@@ -26,15 +15,33 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
-
-        <div className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <Box sx={{
+            display: "flex",
+            flexDirection: "column",
+            height: "100vh",
+            width: "100vw",
+            maxHeight: "100vh",
+            maxWidth: "100vw",
+            overflow: "hidden"
+        }}>
             <Sidebar>
                 <NavBar/>
-                <Box className="border-2 border-gray-200 rounded-2xl h-screen overflow-y-auto p-2">
+                <Box
+                    sx={{
+                        flex: 1,
+                        marginX: -0.5,
+                        marginBottom: 2,
+                        p: 1,
+                        overflow: "auto",
+                        height: "calc(100vh - 120px)",
+                        maxHeight: "calc(100vh - 120px)",
+                        width: "100%",
+                        boxSizing: "border-box"
+                    }}
+                    className="border-2 border-gray-200 rounded-2xl">
                     {children}
                 </Box>
             </Sidebar>
-        </div>
-
+        </Box>
     );
 }
