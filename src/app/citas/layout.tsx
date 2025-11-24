@@ -16,35 +16,30 @@ export default function RootLayout({
 }>) {
     return (
         <Box sx={{
+            display: "flex",
+            flexDirection: "column",
             height: "100vh",
-            width: "100vw",
+            width: "100%",
+            maxHeight: "100vh",
+            maxWidth: "100vw",
             overflow: "hidden"
         }}>
             <Sidebar>
-                <Box sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    height: "100%",
-                    width: "100%",
-                    overflow: "hidden"
-                }}>
-                    <NavBar />
-                    <Box sx={{
+                <NavBar/>
+                <Box
+                    sx={{
                         flex: 1,
-                        m: 1,
-                        p: 2,
+                        marginX: -0.5,
+                        marginBottom: 2,
+                        p: 1,
                         overflow: "auto",
-                        maxWidth: "100%"
+                        height: "calc(100vh - 120px)",
+                        maxHeight: "calc(100vh - 120px)",
+                        width: "100%",
+                        boxSizing: "border-box"
                     }}
-                         className="border-2 border-gray-200 rounded-2xl">
-                        <Box sx={{
-                            width: "100%",
-                            maxWidth: "100%",
-                            overflowX: "auto"
-                        }}>
-                            {children}
-                        </Box>
-                    </Box>
+                    className="border-2 border-gray-200 rounded-2xl">
+                    {children}
                 </Box>
             </Sidebar>
         </Box>

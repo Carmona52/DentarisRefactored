@@ -43,6 +43,9 @@
       ],
       "@/Tables/*": [
         "./src/components/tables/*"
+      ],
+      "@/TablesPacientes/*": [
+        "./src/components/tables/tablasPacientes/*"
       ]
     }
   },

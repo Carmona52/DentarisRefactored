@@ -18,8 +18,8 @@ export default function RootLayout({
         <Box sx={{
             display: "flex",
             flexDirection: "column",
-            height: "100vh",
-            width: "100vw",
+            height: "100dvh",
+            width: "100%",
             maxHeight: "100vh",
             maxWidth: "100vw",
             overflow: "hidden"
