@@ -5,7 +5,7 @@ import Sidebar from "@/navigation/SideBar";
 import Box from '@mui/material/Box';
 
 export const metadata: Metadata = {
-    title: "Dentaris DashBoard",
+    title: "Dentaris Dashboard",
     description: "Dashboard Dentaris, ",
 };
 
