@@ -5,8 +5,8 @@ import Sidebar from "@/navigation/SideBar";
 import Box from '@mui/material/Box';
 
 export const metadata: Metadata = {
-    title: "Dentaris DashBoard",
-    description: "Dashboard Dentaris, ",
+    title: "Citas Dentaris",
+    description: "Pagina de Citas de Dentaris",
 };
 
 export default function RootLayout({
@@ -19,7 +19,7 @@ export default function RootLayout({
             display: "flex",
             flexDirection: "column",
             height: "100vh",
-            width: "100vw",
+            width: "100%",
             maxHeight: "100vh",
             maxWidth: "100vw",
             overflow: "hidden"

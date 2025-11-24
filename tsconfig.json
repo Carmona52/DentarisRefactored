@@ -40,6 +40,15 @@
       ],
       "@/hooks/*": [
         "./src/lib/hooks/*"
+      ],
+      "@/Tables/*": [
+        "./src/components/tables/*"
+      ],
+      "@/TablesPacientes/*": [
+        "./src/components/tables/tablasPacientes/*"
+      ],
+      "@/PopUpsCitas/*": [
+        "./src/components/popups/citas/*"
       ]
     }
   },

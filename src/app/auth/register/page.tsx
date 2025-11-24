@@ -42,7 +42,7 @@ export default function RegisterPage() {
                 setError("Error al crear la cuenta. Verifique los datos.");
             }
         } catch (err) {
-            setError("Error en el servidor. Intente nuevamente.");
+            setError("Error en el servidor. Intente nuevamente." + err);
         } finally {
             setLoading(false);
         }

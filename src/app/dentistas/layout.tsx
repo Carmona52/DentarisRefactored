@@ -5,8 +5,8 @@ import Sidebar from "@/navigation/SideBar";
 import Box from '@mui/material/Box';
 
 export const metadata: Metadata = {
-    title: "Pagina de Pacientes",
-    description: "Pagina de Pacientes de Dentaris, ",
+    title: "Dentaris Dentistas",
+    description: "Pagina de Dentistas Dentaris, ",
 };
 
 export default function RootLayout({

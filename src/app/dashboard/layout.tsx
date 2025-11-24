@@ -5,7 +5,7 @@ import Sidebar from "@/navigation/SideBar";
 import Box from '@mui/material/Box';
 
 export const metadata: Metadata = {
-    title: "Dentaris DashBoard",
+    title: "Dentaris Dashboard",
     description: "Dashboard Dentaris, ",
 };
 
@@ -18,8 +18,8 @@ export default function RootLayout({
         <Box sx={{
             display: "flex",
             flexDirection: "column",
-            height: "100vh",
-            width: "100vw",
+            height: "100dvh",
+            width: "100%",
             maxHeight: "100vh",
             maxWidth: "100vw",
             overflow: "hidden"
