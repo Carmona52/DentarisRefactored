@@ -1,7 +1,7 @@
 'use client'
 import * as React from 'react';
-import {Box, Typography, Button} from '@mui/material';
-import {getCitas, getCitasDetalle} from "@/lib/db/citas/getCitas";
+import {Box, Typography} from '@mui/material';
+import {getCitasDetalle} from "@/lib/db/citas/getCitas";
 import {cita} from "@/types/citas/cita";
 import {useEffect, useState} from "react";
 import {DateCalendar, LocalizationProvider} from "@mui/x-date-pickers";

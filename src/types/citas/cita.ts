@@ -1,7 +1,8 @@
 import {usuario} from "../auth/auth"
 import dayjs from "dayjs";
 export interface cita{
-    id:number,
+    cita_id:number,
+    id:number | string,
     fecha:string,
     hora: string,
     estado: string,
