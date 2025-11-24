@@ -1,11 +1,9 @@
 'use client'
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import {cita} from "@/types/citas/cita";
 import {DataGrid, GridColDef} from '@mui/x-data-grid';
 import dayjs from 'dayjs';
 import 'dayjs/locale/es';
-dayjs.locale('es');
 
 
 interface DataGridDemoProps {
@@ -112,33 +110,12 @@ const columns: GridColDef<cita>[] = [
             );
         }
     },
-    {
-        field: 'actions',
-        headerName: 'Acciones',
-        type: 'actions',
-        flex: 1,
-        maxWidth: 150,
-        valueGetter: (value, row) => row.cita_id,
-        renderCell: (params) => {
-            const citaId = params.value as string;
-
-            const handleViewDetails = () => {
-                console.log('Ver detalles de la cita con ID:', citaId);
-            };
-
-            return (
-                <Button color="primary" onClick={handleViewDetails}>
-                    Ver Detalles
-                </Button>
-            );
-        }
-    }
 ];
 
-export function TableWithButton({data}: DataGridDemoProps) {
+export function SimpleTable({data}: DataGridDemoProps) {
 
     return (
-        <Box sx={{ minWidth: '100%'}}>
+        <Box sx={{height: 600, minWidth: '100%'}}>
             <DataGrid
                 getRowId={(data) => data.cita_id}
                 rows={data}
@@ -146,13 +123,12 @@ export function TableWithButton({data}: DataGridDemoProps) {
                 initialState={{
                     pagination: {
                         paginationModel: {
-                            pageSize: 10,
+                            pageSize: 5,
                         },
                     },
                 }}
-                pageSizeOptions={[5,10, 15, 25]}
+                pageSizeOptions={[5, 10, 25, 50, 100]}
                 disableRowSelectionOnClick
-                disableColumnSelector
                 showToolbar
             />
         </Box>

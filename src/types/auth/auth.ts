@@ -1,4 +1,6 @@
 export interface usuario {
+    updated_at?: string;
+    created_at?: string;
     usuario_id: number;
     rol_id: number;
     consultorio_id: number;
@@ -7,7 +9,7 @@ export interface usuario {
     email: string;
     telefono: string;
     fecha_nacimiento: string;
-    genero: "Femenino" | "Masculino" | "Otro";
+    genero: "F" | "M" | "Otro";
     pais_origen: string;
     direccion: string;
     notas: string;

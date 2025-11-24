@@ -1,6 +1,5 @@
 'use client'
 import {getCitasDetalle} from "@/lib/db/citas/getCitas";
-import {SimpleTable} from "@/Tables/tablasCitas/SimpleTable";
 import {TableWithButton} from "@/Tables/tablasCitas/TableWithButton";
 import {useEffect, useState} from "react";
 import {cita} from "@/types/citas/cita";
