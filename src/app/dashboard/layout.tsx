@@ -1,11 +1,8 @@
-import {ThemeProvider} from '@mui/material/styles'
-import {theme} from "@/theme/theme";
 import type {Metadata} from "next";
 import "../globals.css";
-import NavBar from "@/components/navigation/NavBar"
-import Sidebar from "../../components/navigation/SideBar"
+import NavBar from "@/navigation/NavBar"
+import Sidebar from "@/navigation/SideBar";
 import Box from '@mui/material/Box';
-
 
 export const metadata: Metadata = {
     title: "Dentaris DashBoard",
@@ -18,25 +15,33 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <ThemeProvider theme={theme}>
-
-            <Box sx={{display: "flex", flexDirection: "column", height: "100vh"}}>
-                <Sidebar>
-
-                    <NavBar/>
-                    <Box
-                        sx={{
-                            marginX: -.5,
-                            marginBottom: 2,
-                            p: 1,
-                            overflowY: "auto",
-                            maxHeight: '100vh',
-                        }}
-                        className="m-2 border-2 border-gray-200 ml-4">
-                        {children}
-                    </Box>
-                </Sidebar>
-            </Box>
-        </ThemeProvider>
+        <Box sx={{
+            display: "flex",
+            flexDirection: "column",
+            height: "100vh",
+            width: "100vw",
+            maxHeight: "100vh",
+            maxWidth: "100vw",
+            overflow: "hidden"
+        }}>
+            <Sidebar>
+                <NavBar/>
+                <Box
+                    sx={{
+                        flex: 1,
+                        marginX: -0.5,
+                        marginBottom: 2,
+                        p: 1,
+                        overflow: "auto",
+                        height: "calc(100vh - 120px)",
+                        maxHeight: "calc(100vh - 120px)",
+                        width: "100%",
+                        boxSizing: "border-box"
+                    }}
+                    className="border-2 border-gray-200 rounded-2xl">
+                    {children}
+                </Box>
+            </Sidebar>
+        </Box>
     );
 }
