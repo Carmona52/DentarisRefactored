@@ -24,7 +24,6 @@ export default function Home() {
             const citas: cita[] | string = await getCitasDetalle();
 
             if (Array.isArray(citas)) {
-                // Ordenar citas por fecha y hora
                 const citasOrdenadas = citas.sort((a, b) => {
                     const fechaA = dayjs(a.fecha);
                     const fechaB = dayjs(b.fecha);
