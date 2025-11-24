@@ -46,6 +46,9 @@
       ],
       "@/TablesPacientes/*": [
         "./src/components/tables/tablasPacientes/*"
+      ],
+      "@/PopUpsCitas/*": [
+        "./src/components/popups/citas/*"
       ]
     }
   },
