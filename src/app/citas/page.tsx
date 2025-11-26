@@ -64,7 +64,6 @@ export default function CitasPage() {
 
             if (Array.isArray(citas)) {
                 setCitaDetalle(citas);
-                citas.forEach(cita => console.log(cita.paciente)); // Cambié citaDetalle por citas
             } else {
                 console.error('Error al obtener citas:', citas);
             }

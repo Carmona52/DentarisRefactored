@@ -51,7 +51,7 @@ export default function Home() {
 
 
     const citasDeHoy = citaDetalle.filter(cita =>
-        extraerFecha(cita.fecha) === fechaDeHoy
+        extraerFecha(cita.fecha) === fechaDeHoy && cita.estado !== 'Realizada'
     );
 
 
