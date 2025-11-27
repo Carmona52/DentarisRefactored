@@ -72,8 +72,7 @@ export default function TuComponente() {
                         <Button color="inherit" onClick={()=>router.back()}>
                             Regresar
                         </Button>
-                    }
-                >
+                    }>
                     {error}
                 </Alert>
             </Container>
@@ -228,7 +227,7 @@ export default function TuComponente() {
                     </Card>
                 </Grid>
 
-                {/* Contacto de Emergencia */}
+                {/* Contacto de Emergencia y Información del Sistema*/}
                 <Grid>
                     <Card>
                         <CardContent sx={{p: 3}}>
@@ -254,11 +253,8 @@ export default function TuComponente() {
                             </Grid>
                         </CardContent>
                     </Card>
-                </Grid>
 
-                {/* Información del Sistema */}
-                <Grid >
-                    <Card>
+                    <Card sx={{mt: 3}}>
                         <CardContent sx={{p: 3}}>
                             <Typography variant="h6" fontWeight="bold" gutterBottom color="primary" display="flex"
                                         alignItems="center" gap={1}>

@@ -117,7 +117,6 @@ const columns: GridColDef<cita>[] = [
         headerName: 'Acciones',
         type: 'actions',
         flex: 1,
-        maxWidth: 150,
         valueGetter: (value, row) => row.cita_id,
         renderCell: (params) => {
             const citaId = params.value as string;
@@ -127,7 +126,7 @@ const columns: GridColDef<cita>[] = [
             };
 
             return (
-                <Button color="primary" onClick={handleViewDetails}>
+                <Button color="primary" onClick={handleViewDetails} size='large'>
                     Ver Detalles
                 </Button>
             );
