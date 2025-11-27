@@ -1,7 +1,6 @@
 'use client'
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import {cita} from "@/types/citas/cita";
 import {usuario} from "@/types/auth/auth";
 import {useRouter} from "next/navigation";
 import {DataGrid, GridColDef} from '@mui/x-data-grid';
@@ -10,9 +9,6 @@ import 'dayjs/locale/es';
 
 dayjs.locale('es');
 
-
-const getGenderText = (genero: string) =>
-    genero === "M" ? "Masculino" : "Femenino";
 interface DataGridDemoProps { data: usuario[] }
 
 const columns: GridColDef<usuario>[] = [
@@ -22,7 +18,7 @@ const columns: GridColDef<usuario>[] = [
         flex: 1,
         maxWidth: 180,
         editable: false,
-        valueGetter: (value: cita, row) => `${row.nombre || ''}`,
+        valueGetter: (value: usuario, row) => `${row.nombre || ''}`,
     },
     {
         field: 'apellidos',
@@ -30,42 +26,47 @@ const columns: GridColDef<usuario>[] = [
         flex: 1,
         maxWidth: 180,
         editable: false,
-        valueGetter: (value, row) => `${row.apellidos || ''}`,
+    },
+    {
+        field: 'carrera',
+        headerName: 'Carrera',
+        flex: 1,
+        maxWidth: 250,
+        type: 'string',
+        editable: false,
     },
     {
         field: 'email',
         headerName: 'Email',
         flex: 1,
-        maxWidth: 250,
+        maxWidth: 200,
         type: 'string',
         editable: false,
-        valueGetter: (value, row) => `${row.email || ''}`,
-    },
-    {
-        field: 'fecha_nacimiento',
-        headerName: 'Fecha de Nacimiento',
-        flex: 1,
-        maxWidth: 160,
-        type: 'string',
-        editable: false,
-        valueGetter: (value, row) => dayjs(row.fecha_nacimiento).format('D [de] MMMM [de] YYYY'),
-    },
-    {
-        field: 'genero',
-        headerName: 'Género',
-        flex: 1,
-        minWidth: 100,
-        maxWidth: 130,
-        valueGetter: (_, row) => getGenderText(row.genero),
     },
     {
         field: 'telefono',
-        headerName: 'Número de Teléfono',
+        headerName: 'Teléfono',
+        flex: 1,
+        maxWidth: 150,
+        type: 'string',
+        editable: false,
+    },
+    {
+        field:'cedula_profesional',
+        headerName: 'Cédula Profesional',
         flex: 1,
         maxWidth: 180,
         type: 'string',
         editable: false,
-        valueGetter: (value, row) => `${row.telefono || 'No proporcionado'}`,
+    },
+    {
+        field:'created_at',
+        headerName: 'Fecha de Registro',
+        flex: 1,
+        maxWidth: 180,
+        type: 'string',
+        editable: false,
+        valueGetter: (value: usuario, row) => dayjs(row.created_at).locale('es').format('DD MMMM YYYY').toLocaleUpperCase(),
     },
     {
         field: 'actions',
@@ -78,16 +79,16 @@ const columns: GridColDef<usuario>[] = [
 
             return (
                 <Button color="primary" size='large' onClick={() => {
-                    window.location.href = `/pacientes/${citaId}`
+                    window.location.href = `/dentistas/${citaId}`
                 }}>
-                    Información Detallada
+                    Ver Más
                 </Button>
             );
         }
     }
 ];
 
-export function TableWithButtonPatient({data}: DataGridDemoProps) {
+export function TableWithButtonDentistas({data}: DataGridDemoProps) {
     return (
         <Box sx={{minWidth: '100%'}}>
             <DataGrid

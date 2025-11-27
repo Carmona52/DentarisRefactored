@@ -1,5 +1,5 @@
 'use client'
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {
     Dialog,
     DialogTitle,
@@ -10,15 +10,14 @@ import {
     MenuItem,
     Box,
     Typography,
-    Alert,
     FormControl,
     InputLabel,
     Select
 } from '@mui/material';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { TimePicker } from '@mui/x-date-pickers/TimePicker';
+import {LocalizationProvider} from '@mui/x-date-pickers/LocalizationProvider';
+import {AdapterDayjs} from '@mui/x-date-pickers/AdapterDayjs';
+import {DatePicker} from '@mui/x-date-pickers/DatePicker';
+import {TimePicker} from '@mui/x-date-pickers/TimePicker';
 import dayjs from 'dayjs';
 import 'dayjs/locale/es';
 
@@ -41,13 +40,14 @@ interface AgendarCitaModalProps {
     dentistas: Array<{ usuario_id: number; nombre: string; apellidos: string }>;
 }
 
-const estadosCita = [
-    { value: 'Agendada', label: 'Agendada' },
-    { value: 'Confirmada', label: 'Confirmada' },
-    { value: 'En progreso', label: 'En progreso' },
-    { value: 'Completada', label: 'Completada' },
-    { value: 'Cancelada', label: 'Cancelada' },
-];
+const motivosCita = [
+    {value: 'Consulta general', label: 'Consulta general'},
+    {value: 'Limpieza dental', label: 'Limpieza dental'},
+    {value: 'Tratamiento de caries', label: 'Tratamiento de caries'},
+    {value: 'Extracción dental', label: 'Extracción dental'},
+    {value: 'Ortodoncia', label: 'Ortodoncia'},
+    {value: 'Otros', label: 'Otros'}
+]
 
 export default function AgendarCitaModal({
                                              open,
@@ -62,10 +62,11 @@ export default function AgendarCitaModal({
         fecha: dayjs().format('YYYY-MM-DD'),
         hora: '09:00:00',
         estado: 'Agendada',
-        motivo: ''
+        motivo: 'Consulta general'
     });
     const [errors, setErrors] = useState<Record<string, string>>({});
     const [loading, setLoading] = useState(false);
+    const [newMotivo, setNewMotivo] = useState('');
 
     const handleInputChange = (field: string, value: any) => {
         setFormData(prev => ({
@@ -118,6 +119,10 @@ export default function AgendarCitaModal({
             newErrors.motivo = 'El motivo de la consulta es requerido';
         }
 
+        if(formData.motivo === 'Otros') {
+            formData.motivo = newMotivo;
+        }
+
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
@@ -154,8 +159,7 @@ export default function AgendarCitaModal({
             open={open}
             onClose={handleClose}
             maxWidth="md"
-            fullWidth
-        >
+            fullWidth>
             <DialogTitle>
                 <Typography variant="h5" fontWeight="bold">
                     Agendar Nueva Cita
@@ -163,15 +167,13 @@ export default function AgendarCitaModal({
             </DialogTitle>
 
             <DialogContent>
-                <Box component="form" sx={{ mt: 2 }}>
-                    {/* Paciente */}
-                    <FormControl fullWidth error={!!errors.paciente_id} sx={{ mb: 3 }}>
+                <Box component="form" sx={{mt: 2}}>
+                    <FormControl fullWidth error={!!errors.paciente_id} sx={{mb: 3}}>
                         <InputLabel>Paciente *</InputLabel>
                         <Select
                             value={formData.paciente_id}
                             label="Paciente *"
-                            onChange={(e) => handleInputChange('paciente_id', Number(e.target.value))}
-                        >
+                            onChange={(e) => handleInputChange('paciente_id', Number(e.target.value))}>
                             <MenuItem value={0}>
                                 <em>Selecciona un paciente</em>
                             </MenuItem>
@@ -184,35 +186,31 @@ export default function AgendarCitaModal({
                         {errors.paciente_id && (
                             <Typography variant="caption" color="error">
                                 {errors.paciente_id}
-                            </Typography>
-                        )}
+                            </Typography>)}
                     </FormControl>
 
-                    <FormControl fullWidth error={!!errors.dentista_id} sx={{ mb: 3 }}>
+                    <FormControl fullWidth error={!!errors.dentista_id} sx={{mb: 3}}>
                         <InputLabel>Dentista *</InputLabel>
                         <Select
                             value={formData.dentista_id}
                             label="Dentista *"
-                            onChange={(e) => handleInputChange('dentista_id', Number(e.target.value))}
-                        >
+                            onChange={(e) => handleInputChange('dentista_id', Number(e.target.value))}>
                             <MenuItem value={0}>
                                 <em>Selecciona un dentista</em>
                             </MenuItem>
                             {dentistas.map((dentista) => (
                                 <MenuItem key={dentista.usuario_id} value={dentista.usuario_id}>
                                     {dentista.nombre} {dentista.apellidos}
-                                </MenuItem>
-                            ))}
+                                </MenuItem>))}
                         </Select>
                         {errors.dentista_id && (
                             <Typography variant="caption" color="error">
                                 {errors.dentista_id}
-                            </Typography>
-                        )}
+                            </Typography>)}
                     </FormControl>
 
                     <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
-                        <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 3, mb: 3 }}>
+                        <Box sx={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 3, mb: 3}}>
                             {/* Fecha */}
                             <DatePicker
                                 label="Fecha *"
@@ -225,8 +223,7 @@ export default function AgendarCitaModal({
                                         helperText: errors.fecha,
                                         fullWidth: true
                                     }
-                                }}
-                            />
+                                }}/>
 
                             <TimePicker
                                 label="Hora *"
@@ -238,55 +235,43 @@ export default function AgendarCitaModal({
                                         helperText: errors.hora,
                                         fullWidth: true
                                     }
-                                }}
-                            />
+                                }}/>
                         </Box>
                     </LocalizationProvider>
 
-                    <FormControl fullWidth sx={{ mb: 3 }}>
-                        <InputLabel>Estado</InputLabel>
+                    <FormControl fullWidth sx={{mb: 3}}>
+                        <InputLabel>Motivo de la Consulta</InputLabel>
                         <Select
-                            value={formData.estado}
-                            label="Estado"
-                            onChange={(e) => handleInputChange('estado', e.target.value)}
-                        >
-                            {estadosCita.map((estado) => (
-                                <MenuItem key={estado.value} value={estado.value}>
-                                    {estado.label}
+                            value={formData.motivo}
+                            label="Motico de la Consulta"
+                            onChange={(e) => handleInputChange('motivo', e.target.value)}>
+                            {motivosCita.map((motivo) => (
+                                <MenuItem key={motivo.value} value={motivo.value}>
+                                    {motivo.label}
                                 </MenuItem>
                             ))}
                         </Select>
                     </FormControl>
 
-                    {/* Motivo */}
-                    <TextField
-                        fullWidth
-                        label="Motivo de la consulta *"
-                        multiline
-                        rows={3}
-                        value={formData.motivo}
-                        onChange={(e) => handleInputChange('motivo', e.target.value)}
-                        error={!!errors.motivo}
-                        helperText={errors.motivo}
-                        placeholder="Describe el motivo de la consulta..."
-                    />
+                    {/*Aquí ingreso una nueva entrada de texto por si no cumple la expectativa*/}
+                    {formData.motivo === 'Otros' ?
+                        <TextField sx={{width: '100%'}} label={"Ingrese el motivo de la consulta"}
+                                   onChange={(e) => setNewMotivo(e.target.value)}></TextField> : null}
                 </Box>
             </DialogContent>
 
-            <DialogActions sx={{ p: 3, gap: 1 }}>
+            <DialogActions sx={{p: 3, gap: 1}}>
                 <Button
                     onClick={handleClose}
                     variant="outlined"
-                    disabled={loading}
-                >
+                    disabled={loading}>
                     Cancelar
                 </Button>
                 <Button
                     onClick={handleSubmit}
                     variant="contained"
                     disabled={loading}
-                    sx={{ minWidth: 120 }}
-                >
+                    sx={{minWidth: 120}}>
                     {loading ? 'Agendando...' : 'Agendar Cita'}
                 </Button>
             </DialogActions>

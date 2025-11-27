@@ -14,8 +14,10 @@ export interface usuario {
     direccion: string;
     notas: string;
     alergias: string[];
-    profesion: string;
+    carrera?: string;
     numero_identificacion: string;
+    profesion?: string;
+    cedula_profesional?: string
     nombre_contacto_emergencia: string;
     telefono_contacto_emergencia: string;
     last_login: string;
