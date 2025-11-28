@@ -18,14 +18,32 @@ export default function Home() {
 
     const fechaDeHoy = dayjs().format('YYYY-MM-DD');
     const fechaSeleccionadaFormato = fechaSeleccionada.format('YYYY-MM-DD');
+    const horaActual = dayjs();
 
     useEffect(() => {
         const getCitasDetalleData = async () => {
             const citas: cita[] | string = await getCitasDetalle();
 
             if (Array.isArray(citas)) {
-                // Ordenar citas por fecha y hora
                 const citasOrdenadas = citas.sort((a, b) => {
+                    const ordenEstados = {
+                        'agendada': 1,
+                        'en proceso': 2,
+                        'realizada': 3,
+                        'cancelada': 4
+                    };
+
+                    const estadoA = (a.estado || '').toLowerCase() as keyof typeof ordenEstados;
+                    const estadoB = (b.estado || '').toLowerCase() as keyof typeof ordenEstados;
+
+                    const prioridadA = ordenEstados[estadoA] || 5;
+                    const prioridadB = ordenEstados[estadoB] || 5;
+
+
+                    if (prioridadA !== prioridadB) {
+                        return prioridadA - prioridadB;
+                    }
+
                     const fechaA = dayjs(a.fecha);
                     const fechaB = dayjs(b.fecha);
                     return fechaA.diff(fechaB);
@@ -39,26 +57,39 @@ export default function Home() {
         getCitasDetalleData()
     }, []);
 
-
     const extraerFecha = (fechaISO: string) => {
         return dayjs(fechaISO).format('YYYY-MM-DD');
     };
 
+    const citasDelDiaSeleccionado = citaDetalle.filter(cita => {
+        const mismaFecha = extraerFecha(cita.fecha) === fechaSeleccionadaFormato;
 
-    const citasDelDiaSeleccionado = citaDetalle.filter(cita =>
-        extraerFecha(cita.fecha) === fechaSeleccionadaFormato
-    );
+        if (!mismaFecha) return false;
+        if (fechaSeleccionadaFormato === fechaDeHoy) {
+            return cita.estado?.toLowerCase() !== "realizada";
+        }
 
+        return true;
+    });
 
-    const citasDeHoy = citaDetalle.filter(cita =>
-        extraerFecha(cita.fecha) === fechaDeHoy && cita.estado !== 'Realizada'
-    );
+    const citasDeHoy = citaDetalle.filter(cita => {
+        const esHoy = extraerFecha(cita.fecha) === fechaDeHoy;
+        const esAgendada = cita.estado == 'Agendada';
+        const horaCita = dayjs(cita.fecha);
+        const yaPasoLaHora = horaCita.isBefore(horaActual);
 
+        return esHoy && (esAgendada && yaPasoLaHora);
+    });
 
-    const citasCanceladasHoy = citasDeHoy.filter(cita =>
-        cita.estado === 'cancelada' || cita.estado === 'cancelado'
-    );
+    const citasCanceladasHoy = citasDeHoy.filter(cita => {
+        const estado = cita.estado?.toLowerCase();
+        return estado === 'cancelada' || estado === 'cancelado';
+    });
 
+    const citasActivasHoy = citaDetalle.filter(cita => {
+        const estado = cita.estado?.toLowerCase();
+        return estado === 'en proceso' || estado === 'en proceso';
+    });
 
     const totalCitasHoy = citasDeHoy.length;
 
@@ -160,12 +191,11 @@ export default function Home() {
                             pt={1}
                             borderTop="1px solid #eee">
                             <Typography variant="h2" fontWeight="bold">
-                                {totalCitasHoy - citasCanceladasHoy.length}
+                                {citasActivasHoy.length}
                             </Typography>
                             <Typography variant="h5">Citas Activas</Typography>
                         </Box>
                     </Box>
-
 
                     <Box>
                         <Typography variant="h6" fontWeight="bold" mb={2}>
@@ -196,7 +226,7 @@ export default function Home() {
                                         {cita.paciente?.nombre || 'Paciente'} {cita.paciente?.apellidos || ''}
                                     </Typography>
                                     <Typography variant="body2" color="text.secondary">
-                                        {dayjs(cita.fecha).format('DD/MM/YYYY')} - {dayjs(cita.fecha).format('HH:mm')}
+                                        {dayjs(cita.fecha).format('DD/MM/YYYY')} - {cita.hora.slice(0,5)} hrs
                                     </Typography>
                                     <Typography variant="body2" color="text.secondary">
                                         {cita.motivo || 'Consulta general'}
@@ -204,8 +234,10 @@ export default function Home() {
                                     <Chip
                                         label={cita.estado || 'pendiente'}
                                         color={
-                                            cita.estado === 'confirmada' ? 'success' :
-                                                cita.estado === 'cancelada' ? 'error' : 'default'
+                                            cita.estado === 'en proceso' ? 'primary' :
+                                                cita.estado === 'realizada' ? 'success' :
+                                                    cita.estado === 'confirmada' ? 'secondary' :
+                                                        cita.estado === 'cancelada' || cita.estado === 'cancelado' ? 'error' : 'default'
                                         }
                                         size="small"
                                         sx={{ mt: 1 }}

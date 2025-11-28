@@ -1,12 +1,11 @@
 'use client'
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
     Dialog,
     DialogTitle,
     DialogContent,
     DialogActions,
     Button,
-    TextField,
     MenuItem,
     Box,
     Typography,
@@ -14,12 +13,18 @@ import {
     InputLabel,
     Select
 } from '@mui/material';
+import TextField from '@mui/material/TextField';
+import Autocomplete from '@mui/material/Autocomplete';
 import {LocalizationProvider} from '@mui/x-date-pickers/LocalizationProvider';
 import {AdapterDayjs} from '@mui/x-date-pickers/AdapterDayjs';
 import {DatePicker} from '@mui/x-date-pickers/DatePicker';
 import {TimePicker} from '@mui/x-date-pickers/TimePicker';
+import {getDentistas} from "@/lib/db/dentistas/dentistas";
+import {getPacientes} from "@/lib/db/pacientes/pacientes";
 import dayjs from 'dayjs';
 import 'dayjs/locale/es';
+import {isArray} from "node:util";
+import {usuario} from "@/types/auth/auth";
 
 dayjs.locale('es');
 
@@ -36,8 +41,6 @@ interface AgendarCitaModalProps {
     open: boolean;
     onClose: () => void;
     onAgendarCita: (citaData: CitaFormData) => void;
-    pacientes: Array<{ usuario_id: number; nombre: string; apellidos: string }>;
-    dentistas: Array<{ usuario_id: number; nombre: string; apellidos: string }>;
 }
 
 const motivosCita = [
@@ -49,24 +52,72 @@ const motivosCita = [
     {value: 'Otros', label: 'Otros'}
 ]
 
+// Función auxiliar para validar fecha y hora
+const isValidDateTime = (fecha: string, hora: string): boolean => {
+    const fechaHoraSeleccionada = dayjs(`${fecha} ${hora}`);
+    const ahora = dayjs();
+    return fechaHoraSeleccionada.isValid() && fechaHoraSeleccionada.isAfter(ahora);
+};
+
 export default function AgendarCitaModal({
                                              open,
                                              onClose,
                                              onAgendarCita,
-                                             pacientes,
-                                             dentistas
                                          }: AgendarCitaModalProps) {
     const [formData, setFormData] = useState<CitaFormData>({
         paciente_id: 0,
         dentista_id: 0,
         fecha: dayjs().format('YYYY-MM-DD'),
-        hora: '09:00:00',
+        hora: dayjs().add(1, 'hour').startOf('hour').format('HH:mm:00'),
         estado: 'Agendada',
         motivo: 'Consulta general'
     });
     const [errors, setErrors] = useState<Record<string, string>>({});
     const [loading, setLoading] = useState(false);
     const [newMotivo, setNewMotivo] = useState('');
+    const [dentistasData, setDentistasData] = useState<Array<{
+        usuario_id: number;
+        nombre: string;
+        apellidos: string
+    }>>([]);
+    const [pacientes, setPacientes] = useState<usuario[]>([]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const [dentistasData, pacientesData] = await Promise.all([
+                    getDentistas(),
+                    getPacientes()
+                ]);
+
+                setDentistasData(dentistasData);
+
+                if (Array.isArray(pacientesData)) {
+                    setPacientes(pacientesData);
+                } else {
+                    console.error('Error al obtener pacientes:', pacientesData);
+                    setPacientes([]);
+                }
+            } catch (error) {
+                console.error('Error cargando datos:', error);
+                setPacientes([]);
+                setDentistasData([]);
+            }
+        };
+
+        if (open) {
+            fetchData();
+        }
+    }, [open]);
+
+    const excludePacientesBaja = pacientes.filter(paciente => paciente.estado !== 'Baja');
+
+    const pacienteOptions = excludePacientesBaja.map((paciente) => ({
+        id: paciente.usuario_id,
+        label: `${paciente.nombre} ${paciente.apellidos}`
+    }));
+
+    const selectedPaciente = pacienteOptions.find(option => option.id === formData.paciente_id) || null;
 
     const handleInputChange = (field: string, value: any) => {
         setFormData(prev => ({
@@ -84,7 +135,14 @@ export default function AgendarCitaModal({
 
     const handleDateChange = (date: dayjs.Dayjs | null) => {
         if (date && date.isValid()) {
-            handleInputChange('fecha', date.format('YYYY-MM-DD'));
+            const nuevaFecha = date.format('YYYY-MM-DD');
+            handleInputChange('fecha', nuevaFecha);
+
+
+            if (!isValidDateTime(nuevaFecha, formData.hora)) {
+                const horaAjustada = dayjs().add(1, 'hour').startOf('hour').format('HH:mm:00');
+                handleInputChange('hora', horaAjustada);
+            }
         }
     };
 
@@ -96,6 +154,7 @@ export default function AgendarCitaModal({
 
     const validateForm = (): boolean => {
         const newErrors: Record<string, string> = {};
+        const ahora = dayjs();
 
         if (!formData.paciente_id) {
             newErrors.paciente_id = 'Selecciona un paciente';
@@ -107,20 +166,31 @@ export default function AgendarCitaModal({
 
         if (!formData.fecha) {
             newErrors.fecha = 'Selecciona una fecha';
-        } else if (dayjs(formData.fecha).isBefore(dayjs(), 'day')) {
+        } else if (dayjs(formData.fecha).isBefore(ahora, 'day')) {
             newErrors.fecha = 'No puedes agendar citas en fechas pasadas';
         }
 
         if (!formData.hora) {
             newErrors.hora = 'Selecciona una hora';
+        } else {
+
+            const fechaHoraSeleccionada = dayjs(`${formData.fecha} ${formData.hora}`);
+
+            if (fechaHoraSeleccionada.isBefore(ahora)) {
+                if (dayjs(formData.fecha).isSame(ahora, 'day')) {
+                    newErrors.hora = 'La hora seleccionada ya pasó. Selecciona una hora futura';
+                } else {
+                    newErrors.fecha = 'No puedes agendar citas en fechas/horas pasadas';
+                }
+            }
         }
 
         if (!formData.motivo.trim()) {
             newErrors.motivo = 'El motivo de la consulta es requerido';
         }
 
-        if(formData.motivo === 'Otros') {
-            formData.motivo = newMotivo;
+        if (formData.motivo === 'Otros' && !newMotivo.trim()) {
+            newErrors.motivo = 'Debes especificar el motivo de la consulta';
         }
 
         setErrors(newErrors);
@@ -128,11 +198,16 @@ export default function AgendarCitaModal({
     };
 
     const handleSubmit = async () => {
+        const datosFinales = {
+            ...formData,
+            motivo: formData.motivo === 'Otros' ? newMotivo : formData.motivo
+        };
+
         if (!validateForm()) return;
 
         setLoading(true);
         try {
-            await onAgendarCita(formData);
+            await onAgendarCita(datosFinales);
             handleClose();
         } catch (error) {
             console.error('Error al agendar cita:', error);
@@ -146,12 +221,26 @@ export default function AgendarCitaModal({
             paciente_id: 0,
             dentista_id: 0,
             fecha: dayjs().format('YYYY-MM-DD'),
-            hora: '09:00:00',
+            hora: dayjs().add(1, 'hour').startOf('hour').format('HH:mm:00'),
             estado: 'Agendada',
-            motivo: ''
+            motivo: 'Consulta general'
         });
+        setNewMotivo('');
         setErrors({});
         onClose();
+    };
+
+
+    const getMinTime = () => {
+        const hoy = dayjs();
+        const fechaSeleccionada = dayjs(formData.fecha);
+
+        if (fechaSeleccionada.isSame(hoy, 'day')) {
+
+            return hoy.add(1, 'hour').startOf('hour');
+        }
+
+        return dayjs().startOf('day');
     };
 
     return (
@@ -161,33 +250,30 @@ export default function AgendarCitaModal({
             maxWidth="md"
             fullWidth>
             <DialogTitle>
-                <Typography variant="h5" fontWeight="bold">
+                <Typography fontWeight="bold">
                     Agendar Nueva Cita
                 </Typography>
             </DialogTitle>
 
             <DialogContent>
                 <Box component="form" sx={{mt: 2}}>
-                    <FormControl fullWidth error={!!errors.paciente_id} sx={{mb: 3}}>
-                        <InputLabel>Paciente *</InputLabel>
-                        <Select
-                            value={formData.paciente_id}
-                            label="Paciente *"
-                            onChange={(e) => handleInputChange('paciente_id', Number(e.target.value))}>
-                            <MenuItem value={0}>
-                                <em>Selecciona un paciente</em>
-                            </MenuItem>
-                            {pacientes.map((paciente) => (
-                                <MenuItem key={paciente.usuario_id} value={paciente.usuario_id}>
-                                    {paciente.nombre} {paciente.apellidos}
-                                </MenuItem>
-                            ))}
-                        </Select>
-                        {errors.paciente_id && (
-                            <Typography variant="caption" color="error">
-                                {errors.paciente_id}
-                            </Typography>)}
-                    </FormControl>
+                    <Autocomplete
+                        disablePortal
+                        options={pacienteOptions}
+                        value={selectedPaciente}
+                        onChange={(event, newValue) => {
+                            handleInputChange('paciente_id', newValue ? newValue.id : 0);
+                        }}
+                        sx={{mb: 2}}
+                        renderInput={(params) => (
+                            <TextField
+                                {...params}
+                                label="Paciente *"
+                                error={!!errors.paciente_id}
+                                helperText={errors.paciente_id}
+                            />
+                        )}
+                    />
 
                     <FormControl fullWidth error={!!errors.dentista_id} sx={{mb: 3}}>
                         <InputLabel>Dentista *</InputLabel>
@@ -198,7 +284,7 @@ export default function AgendarCitaModal({
                             <MenuItem value={0}>
                                 <em>Selecciona un dentista</em>
                             </MenuItem>
-                            {dentistas.map((dentista) => (
+                            {dentistasData.map((dentista) => (
                                 <MenuItem key={dentista.usuario_id} value={dentista.usuario_id}>
                                     {dentista.nombre} {dentista.apellidos}
                                 </MenuItem>))}
@@ -211,7 +297,6 @@ export default function AgendarCitaModal({
 
                     <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="es">
                         <Box sx={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 3, mb: 3}}>
-                            {/* Fecha */}
                             <DatePicker
                                 label="Fecha *"
                                 value={dayjs(formData.fecha)}
@@ -227,8 +312,9 @@ export default function AgendarCitaModal({
 
                             <TimePicker
                                 label="Hora *"
-                                value={dayjs(`2025-01-01 ${formData.hora}`)}
+                                value={dayjs(`2000-01-01 ${formData.hora}`)} // Usar fecha fija para evitar problemas de fecha
                                 onChange={handleTimeChange}
+                                minTime={getMinTime()}
                                 slotProps={{
                                     textField: {
                                         error: !!errors.hora,
@@ -239,11 +325,11 @@ export default function AgendarCitaModal({
                         </Box>
                     </LocalizationProvider>
 
-                    <FormControl fullWidth sx={{mb: 3}}>
-                        <InputLabel>Motivo de la Consulta</InputLabel>
+                    <FormControl fullWidth error={!!errors.motivo} sx={{mb: 3}}>
+                        <InputLabel>Motivo de la Consulta *</InputLabel>
                         <Select
                             value={formData.motivo}
-                            label="Motico de la Consulta"
+                            label="Motivo de la Consulta *"
                             onChange={(e) => handleInputChange('motivo', e.target.value)}>
                             {motivosCita.map((motivo) => (
                                 <MenuItem key={motivo.value} value={motivo.value}>
@@ -251,12 +337,24 @@ export default function AgendarCitaModal({
                                 </MenuItem>
                             ))}
                         </Select>
+                        {errors.motivo && (
+                            <Typography variant="caption" color="error">
+                                {errors.motivo}
+                            </Typography>
+                        )}
                     </FormControl>
 
-                    {/*Aquí ingreso una nueva entrada de texto por si no cumple la expectativa*/}
-                    {formData.motivo === 'Otros' ?
-                        <TextField sx={{width: '100%'}} label={"Ingrese el motivo de la consulta"}
-                                   onChange={(e) => setNewMotivo(e.target.value)}></TextField> : null}
+                    {formData.motivo === 'Otros' && (
+                        <TextField
+                            fullWidth
+                            label="Especifica el motivo de la consulta *"
+                            value={newMotivo}
+                            onChange={(e) => setNewMotivo(e.target.value)}
+                            error={!!errors.motivo}
+                            helperText={errors.motivo}
+                            sx={{mb: 2}}
+                        />
+                    )}
                 </Box>
             </DialogContent>
 
@@ -264,6 +362,7 @@ export default function AgendarCitaModal({
                 <Button
                     onClick={handleClose}
                     variant="outlined"
+                    color="secondary"
                     disabled={loading}>
                     Cancelar
                 </Button>

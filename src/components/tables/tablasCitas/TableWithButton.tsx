@@ -63,7 +63,7 @@ const columns: GridColDef<cita>[] = [
         maxWidth: 200,
         type: 'string',
         editable: false,
-        valueGetter: (value, row) => `${row.dentista.nombre || 'a'} ${row.dentista.apellidos || ''}`.trim(),
+        valueGetter: (value, row) => `${row.dentista.nombre || 'a'} ${row.dentista.apellidos || ''}`,
     },
     {
         field: 'estado',
@@ -121,13 +121,11 @@ const columns: GridColDef<cita>[] = [
         renderCell: (params) => {
             const citaId = params.value as string;
 
-            const handleViewDetails = () => {
-                console.log('Ver detalles de la cita con ID:', citaId);
-            };
-
             return (
-                <Button color="primary" onClick={handleViewDetails} size='large'>
-                    Ver Detalles
+                <Button color="primary" size='large' onClick={() => {
+                    window.location.href = `/citas/${citaId}`
+                }}>
+                    Información Detallada
                 </Button>
             );
         }
