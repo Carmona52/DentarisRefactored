@@ -1,5 +1,5 @@
 
-import {data, cita} from "@/types/citas/cita";
+import {data, cita, Onedata} from "@/types/citas/cita";
 
 import axios from "axios";
 
@@ -30,6 +30,21 @@ export const getCitasDetalle= async ():Promise<cita[] | string> => {
     const api_url_detalle = `${api_url}/detalle`;
     try {
         const data = await axios.get<data>(api_url_detalle);
+        if(data.status !== 200){
+            return errorMessage;
+        }
+
+        const newData = data.data;
+        return newData.data;
+    }catch (error){
+        return errorMessage + error;
+    }
+}
+
+export const getCitaById= async (id:number):Promise<cita| string> => {
+    const api_url_detalle = `${api_url}/${id}/detalle`;
+    try {
+        const data = await axios.get<Onedata>(api_url_detalle);
         if(data.status !== 200){
             return errorMessage;
         }
