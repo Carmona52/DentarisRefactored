@@ -19,6 +19,9 @@ dayjs.locale('es')
 const CardCita: React.FC<Props> = ({cita}) => {
     const fechaFormateada = dayjs(cita.fecha).format('D [de] MMMM [de] YYYY');
     const horaFormateada = cita.hora.slice(0, 5);
+    const irCita = () => {
+        window.location.href = `/citas/${cita.cita_id}`;
+    }
 
     return (
         <Card
@@ -36,8 +39,8 @@ const CardCita: React.FC<Props> = ({cita}) => {
                     boxShadow: '0 6px 16px rgba(0, 0, 0, 0.1)',
                 },
             }}
-        >
-            <Box display="flex" alignItems="center" mb={2}>
+        onClick={irCita}>
+            <Box display="flex" alignItems="center" mb={2} >
                 <Box sx={{width:48, height:48, borderRadius: 4, backgroundColor:"#e0f7fa", display: 'flex', justifyContent: 'center', alignItems: 'center', marginRight:2}}>
                     <PersonIcon sx={{color: '#00796b'}}/>
                 </Box>
@@ -48,6 +51,8 @@ const CardCita: React.FC<Props> = ({cita}) => {
                     <Typography variant="body2" color="text.secondary">
                         {cita.motivo}
                     </Typography>
+
+                    <Typography variant='caption'>{cita.estado}</Typography>
                 </Box>
             </Box>
 
@@ -58,8 +63,7 @@ const CardCita: React.FC<Props> = ({cita}) => {
                 bgcolor="#f9fafb"
                 px={2}
                 py={1.5}
-                borderRadius={3}
-            >
+                borderRadius={3}>
                 <Box display="flex" alignItems="center" gap={1}>
                     <CalendarMonthIcon sx={{fontSize: 20, color: '#1976d2'}}/>
                     <Typography variant="body2" fontWeight="medium" color="text.primary">

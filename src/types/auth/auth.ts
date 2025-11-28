@@ -2,14 +2,14 @@ export interface usuario {
     updated_at?: string;
     created_at?: string;
     usuario_id: number;
-    rol_id: number;
+    rol_id?: number;
     consultorio_id: number;
     nombre: string;
     apellidos: string;
     email: string;
     telefono: string;
     fecha_nacimiento: string;
-    genero: "F" | "M" | "Otro";
+    genero: "F" | "M" | "Otro" | string;
     pais_origen: string;
     direccion: string;
     notas: string;
@@ -22,7 +22,8 @@ export interface usuario {
     telefono_contacto_emergencia: string;
     last_login: string;
     token?: string;
-    success: boolean;
+    rol?: string;
+    estado?: string
 }
 
 export interface clinica {
@@ -32,4 +33,23 @@ export interface clinica {
     email: string;
     password: string;
     rol: string;
+}
+
+export interface createUser {
+    nombre: string;
+    apellidos: string;
+    email: string;
+    telefono: string;
+    fecha_nacimiento: string;
+    genero: "F" | "M" | "Otro" | string;
+    pais_origen: string;
+    direccion: string;
+    alergias?: string;
+    carrera?: string;
+    numero_identificacion: string;
+    profesion?: string;
+    nombre_contacto_emergencia: string;
+    telefono_contacto_emergencia: string;
+    rol?: string;
+    notas: string;
 }

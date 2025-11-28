@@ -14,6 +14,10 @@ export interface data{
     data:cita[]
 }
 
+export interface Onedata{
+    data:cita
+}
+
 
 export interface updateCita{
     estado:string,

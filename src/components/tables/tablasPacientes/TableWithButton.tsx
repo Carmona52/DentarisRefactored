@@ -13,7 +13,10 @@ dayjs.locale('es');
 
 const getGenderText = (genero: string) =>
     genero === "M" ? "Masculino" : "Femenino";
-interface DataGridDemoProps { data: usuario[] }
+
+interface DataGridDemoProps {
+    data: usuario[]
+}
 
 const columns: GridColDef<usuario>[] = [
     {
@@ -67,7 +70,51 @@ const columns: GridColDef<usuario>[] = [
         editable: false,
         valueGetter: (value, row) => `${row.telefono || 'No proporcionado'}`,
     },
+
     {
+        field: 'estado',
+        headerName: 'Estado del Paciente',
+        flex: 1,
+        maxWidth: 180,
+        type: 'string',
+        editable: false,
+        valueGetter: (value, row) => `${row.estado?.toString()|| 'Desconocido'}`,
+        renderCell: (params) => {
+            const estado = params.value as string;
+            let color = '';
+            let bgColor = '';
+
+            switch (estado?.toLowerCase()) {
+                case 'activo':
+                    color = '#155724';
+                    bgColor = '#d4edda';
+                    break;
+                case 'baja':
+                    color = '#721c24';
+                    bgColor = '#f8d7da';
+                    break;
+                case 'confirmada':
+                    color = '#004085';
+                    bgColor = '#cce5ff';
+                    break;
+                default:
+                    color = '#383d41';
+                    bgColor = '#e2e3e5';
+            }
+            return (
+                <Box
+                    sx={{
+                        backgroundColor: bgColor,
+                        color: color,
+                        fontWeight: 'bold',
+                        textAlign: 'center',
+                    }}>
+                    {params.value}
+                </Box>
+            );
+        }
+    }
+    , {
         field: 'actions',
         headerName: 'Acciones',
         type: 'actions',
